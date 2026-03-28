@@ -10,40 +10,27 @@ const Dashboard = () => {
   const [filter, setFilter] = useState('ALL');
   const navigate = useNavigate();
 
-  const fetchReports = async (showLoading = true) => {
-    if (showLoading) setLoading(true);
-    try {
-      const resp = await apiClient.get('/reports');
-      if (Array.isArray(resp.data)) {
-        setReports(resp.data);
-      }
-    } catch (err) {
-      console.error('Failed to fetch investigations', err);
-    } finally {
-      if (showLoading) setLoading(false);
-    }
-  };
-
   useEffect(() => {
-    fetchReports(true);
-    
-    // Poll more frequently if there are active cases
-    const interval = setInterval(() => {
-      const hasActive = reports.some(r => {
-        const s = r.status?.toUpperCase();
-        return s === 'PENDING' || s === 'RUNNING';
-      });
-      
-      if (hasActive || reports.length === 0) {
-        fetchReports(false);
+    const fetchReports = async () => {
+      try {
+        const resp = await apiClient.get('/reports');
+        if (Array.isArray(resp.data)) {
+          setReports(resp.data);
+        } else {
+          console.error('API did not return an array of reports:', resp.data);
+          setReports([]);
+        }
+      } catch (err) {
+        console.error('Failed to fetch investigations', err);
+      } finally {
+        setLoading(false);
       }
-    }, 10000);
+    };
+    fetchReports();
+  }, []);
 
-    return () => clearInterval(interval);
-  }, [reports.length]); // Re-run if count changes, but interval handles the rest
-
-  const filteredReports = filter === 'ALL' 
-    ? reports 
+  const filteredReports = filter === 'ALL'
+    ? reports
     : reports.filter(r => r.status.toUpperCase() === filter);
 
   const getStatusColor = (status) => {
@@ -62,9 +49,9 @@ const Dashboard = () => {
           <h1 className="serif" style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>ACTIVE INVESTIGATIONS</h1>
           <p style={{ opacity: 0.6, fontSize: '0.8rem', letterSpacing: '2px' }}>VERIFICATION OFFICER DASHBOARD</p>
         </div>
-        <button 
+        <button
           onClick={() => navigate('/intake')}
-          className="btn-primary" 
+          className="btn-primary"
           style={{ background: 'var(--color-primary)', color: 'var(--color-bg)', display: 'flex', alignItems: 'center', gap: '8px' }}
         >
           <Search size={18} /> OPEN NEW CASE
@@ -79,11 +66,11 @@ const Dashboard = () => {
         <>
           <div style={{ display: 'flex', gap: '1rem', marginBottom: '2rem', overflowX: 'auto', paddingBottom: '10px' }}>
             {['ALL', 'PENDING', 'RUNNING', 'COMPLETED', 'FAILED'].map(f => (
-              <button 
+              <button
                 key={f}
                 onClick={() => setFilter(f)}
-                style={{ 
-                  padding: '5px 15px', border: '1px solid var(--color-primary)', 
+                style={{
+                  padding: '5px 15px', border: '1px solid var(--color-primary)',
                   background: filter === f ? 'var(--color-primary)' : 'transparent',
                   color: filter === f ? 'var(--color-bg)' : 'var(--color-primary)',
                   fontSize: '0.7rem', fontWeight: 'bold', cursor: 'pointer',
@@ -103,11 +90,11 @@ const Dashboard = () => {
           ) : (
             <div className="grid-cols-2">
               {filteredReports.map((report) => (
-                <motion.div 
+                <motion.div
                   key={report.id}
                   className="dossier-card"
-                  style={{ 
-                    padding: '1.5rem', cursor: 'pointer', 
+                  style={{
+                    padding: '1.5rem', cursor: 'pointer',
                     border: '1px solid rgba(255,255,255,0.05)',
                     background: 'rgba(255,255,255,0.02)',
                     position: 'relative', overflow: 'hidden'
@@ -122,7 +109,7 @@ const Dashboard = () => {
                     </div>
                     <StatusBadge status={report.status} />
                   </div>
-                  
+
                   <h3 className="serif" style={{ fontSize: '1.4rem', marginBottom: '0.5rem' }}>{report.subject_name}</h3>
                   <div style={{ display: 'flex', gap: '1.5rem', opacity: 0.6, fontSize: '0.75rem' }}>
                     <span>CITY: {report.input_data?.current_city || 'NA'}</span>
@@ -146,7 +133,7 @@ const StatusBadge = ({ status }) => {
   const s = status?.toUpperCase();
   let Icon = Clock;
   let color = '#999';
-  
+
   if (s === 'COMPLETED') { Icon = CheckCircle; color = '#4caf50'; }
   if (s === 'FAILED') { Icon = AlertCircle; color = '#f44336'; }
   if (s === 'RUNNING') { color = '#ff9800'; }

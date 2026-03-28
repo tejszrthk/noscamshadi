@@ -35,7 +35,7 @@ const Navbar = () => {
 
         <div style={{ display: 'flex', gap: '2rem', alignItems: 'center' }}>
           <Link to="/" className="btn-outline" style={{ border: 'none' }}>Home</Link>
-          {isAuthenticated ? (
+          {isLoggedIn ? (
             <>
               <Link to="/dashboard" className="btn-outline" style={{ border: 'none' }}>Investigations</Link>
               <Link to="/intake" className="btn-primary" style={{ padding: '8px 16px' }}>Open Case</Link>

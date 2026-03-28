@@ -28,24 +28,24 @@ const Signup = () => {
 
   return (
     <div className="flex-center" style={{ minHeight: '75vh' }}>
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
-        className="glass" 
+        className="glass"
         style={{ width: '100%', maxWidth: '450px', padding: '3rem 2rem' }}
       >
         <div className="flex-center" style={{ marginBottom: '2rem', gap: '10px' }}>
           <UserPlus size={40} color="var(--color-primary)" />
           <h2 className="serif">Agent Registration</h2>
         </div>
-        
+
         <form onSubmit={handleSignup}>
           {error && <div style={{ color: 'var(--color-accent)', marginBottom: '1rem', fontSize: '0.9rem' }}>{error}</div>}
-          
+
           <div style={{ marginBottom: '1.5rem' }}>
             <label style={{ display: 'block', marginBottom: '8px', opacity: 0.7, fontSize: '0.8rem', letterSpacing: '1px' }}>FULL NAME</label>
-            <input 
-              type="text" 
+            <input
+              type="text"
               required
               className="glass"
               style={{ width: '100%', padding: '12px', color: 'white' }}
@@ -56,8 +56,8 @@ const Signup = () => {
 
           <div style={{ marginBottom: '1.5rem' }}>
             <label style={{ display: 'block', marginBottom: '8px', opacity: 0.7, fontSize: '0.8rem', letterSpacing: '1px' }}>AGENT EMAIL</label>
-            <input 
-              type="email" 
+            <input
+              type="email"
               required
               className="glass"
               style={{ width: '100%', padding: '12px', color: 'white' }}
@@ -68,8 +68,8 @@ const Signup = () => {
 
           <div style={{ marginBottom: '2rem' }}>
             <label style={{ display: 'block', marginBottom: '8px', opacity: 0.7, fontSize: '0.8rem', letterSpacing: '1px' }}>SECRET CLEARANCE (PASSWORD)</label>
-            <input 
-              type="password" 
+            <input
+              type="password"
               required
               className="glass"
               style={{ width: '100%', padding: '12px', color: 'white' }}
