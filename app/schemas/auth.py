@@ -3,6 +3,7 @@ from pydantic import BaseModel, EmailStr, Field
 
 class SignupRequest(BaseModel):
     email: EmailStr
+    username: str | None = Field(default=None, min_length=3, max_length=50)
     full_name: str = Field(min_length=2, max_length=255)
     password: str = Field(min_length=8, max_length=128)
 
@@ -20,6 +21,7 @@ class TokenResponse(BaseModel):
 class UserResponse(BaseModel):
     id: str
     email: EmailStr
+    username: str
     full_name: str
     is_active: bool
 
