@@ -10,24 +10,37 @@ const Dashboard = () => {
   const [filter, setFilter] = useState('ALL');
   const navigate = useNavigate();
 
-  useEffect(() => {
-    const fetchReports = async () => {
-      try {
-        const resp = await apiClient.get('/reports');
-        if (Array.isArray(resp.data)) {
-          setReports(resp.data);
-        } else {
-          console.error('API did not return an array of reports:', resp.data);
-          setReports([]);
-        }
-      } catch (err) {
-        console.error('Failed to fetch investigations', err);
-      } finally {
-        setLoading(false);
+  const fetchReports = async (showLoading = true) => {
+    if (showLoading) setLoading(true);
+    try {
+      const resp = await apiClient.get('/reports');
+      if (Array.isArray(resp.data)) {
+        setReports(resp.data);
       }
-    };
-    fetchReports();
-  }, []);
+    } catch (err) {
+      console.error('Failed to fetch investigations', err);
+    } finally {
+      if (showLoading) setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchReports(true);
+    
+    // Poll more frequently if there are active cases
+    const interval = setInterval(() => {
+      const hasActive = reports.some(r => {
+        const s = r.status?.toUpperCase();
+        return s === 'PENDING' || s === 'RUNNING';
+      });
+      
+      if (hasActive || reports.length === 0) {
+        fetchReports(false);
+      }
+    }, 10000);
+
+    return () => clearInterval(interval);
+  }, [reports.length]); // Re-run if count changes, but interval handles the rest
 
   const filteredReports = filter === 'ALL' 
     ? reports 

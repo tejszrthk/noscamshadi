@@ -23,7 +23,8 @@ const Report = () => {
   useEffect(() => {
     fetchData();
     const interval = setInterval(() => {
-      if (report?.status === 'pending' || report?.status === 'running') {
+      const s = report?.status?.toUpperCase();
+      if (s === 'PENDING' || s === 'RUNNING') {
         fetchData();
       }
     }, 5000);
@@ -94,32 +95,29 @@ const Report = () => {
           </div>
 
           <AnimatePresence mode="wait">
-            {report?.status === 'running' || report?.status === 'pending' ? (
+            {report?.status?.toUpperCase() === 'RUNNING' || report?.status?.toUpperCase() === 'PENDING' ? (
               <motion.div 
                 key="processing"
                 initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                className="flex-center" 
-                style={{ flexDirection: 'column', padding: '4rem 0', background: 'rgba(0,0,0,0.03)', borderRadius: '12px' }}
+                style={{ padding: '2rem 3rem', background: 'rgba(0,0,0,0.03)', borderRadius: '12px' }}
               >
-                <div className="animate-spin" style={{ marginBottom: '1.5rem', position: 'relative' }}>
-                  <Loader2 size={40} />
-                  <motion.div 
-                    animate={{ y: [0, 40, 0] }}
-                    transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-                    style={{ position: 'absolute', top: 0, left: -20, right: -20, height: '2px', background: 'var(--color-primary)', boxShadow: '0 0 10px var(--color-primary)' }}
-                  />
-                </div>
-                <h4 className="serif">Intelligence Gathering in Progress...</h4>
-                <div style={{ width: '100%', maxWidth: '300px', height: '4px', background: '#ddd', marginTop: '1.5rem', borderRadius: '2px', overflow: 'hidden' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '20px', marginBottom: '3rem' }}>
+                  <div className="animate-spin" style={{ position: 'relative' }}>
+                    <Loader2 size={32} />
                     <motion.div 
-                      animate={{ x: ['-100%', '100%'] }}
-                      transition={{ duration: 3, repeat: Infinity }}
-                      style={{ width: '50%', height: '100%', background: 'var(--color-accent)' }}
+                      animate={{ y: [0, 32, 0] }}
+                      transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                      style={{ position: 'absolute', top: 0, left: -5, right: -5, height: '1.5px', background: 'var(--color-primary)', boxShadow: '0 0 10px var(--color-primary)' }}
                     />
+                  </div>
+                  <h4 className="serif" style={{ fontSize: '1.5rem' }}>Intelligence Gathering in Progress...</h4>
                 </div>
-                <p style={{ fontSize: '0.8rem', opacity: 0.6, maxWidth: '400px', textAlign: 'center', marginTop: '10px' }}>
-                  Agents are scrubbing eCourts, MCA21, GST registers, and social footprints.
-                </p>
+
+                <InvestigationTimeline currentStatus={report?.status} />
+
+                <div style={{ marginTop: '3rem', opacity: 0.6, fontSize: '0.8rem', textAlign: 'center', fontStyle: 'italic' }}>
+                  "Verify everything, trust nothing until the evidence dictates otherwise." — Internal Protocol 142
+                </div>
               </motion.div>
             ) : out ? (
               <motion.div 
@@ -250,6 +248,61 @@ const StatusBadgeLarge = ({ status }) => {
   return (
     <div style={{ backgroundColor: color, color: 'white', padding: '8px 20px', borderRadius: '4px', fontWeight: 'bold', fontSize: '0.9rem', display: 'inline-block' }}>
       {s || 'OFFLINE'}
+    </div>
+  );
+};
+
+const InvestigationTimeline = ({ currentStatus }) => {
+  const steps = [
+    { id: 1, label: "Initializing Global Search", detail: "Connecting to secure nodes..." },
+    { id: 2, label: "LegalKart Judicial Review", detail: "Scrubbing high-court records and pending litigation." },
+    { id: 3, label: "MCA & Business Deep-Scan", detail: "GSTIN validation and directorship verification." },
+    { id: 4, label: "Social Footprint Analysis", detail: "Aggregating LinkedIn, Instagram, and web mentions." },
+    { id: 5, label: "Disparity Processing", detail: "Matching claims against statutory data." },
+    { id: 6, label: "Final Dossier Generation", detail: "Compiling legal advisory and risk stamps." }
+  ];
+
+  // Since we don't have real module-level progress from backend yet, 
+  // we simulate a cycle based on the "RUNNING" state duration.
+  const [activeStep, setActiveStep] = useState(1);
+
+  useEffect(() => {
+    if (currentStatus?.toUpperCase() === 'RUNNING') {
+      const interval = setInterval(() => {
+        setActiveStep(prev => (prev < steps.length ? prev + 1 : prev));
+      }, 7000); // Progress roughly every 7 seconds for visual effect
+      return () => clearInterval(interval);
+    }
+  }, [currentStatus]);
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+      {steps.map((step) => {
+        const isActive = activeStep === step.id;
+        const isComplete = activeStep > step.id;
+        
+        return (
+          <div key={step.id} style={{ display: 'flex', gap: '20px', alignItems: 'flex-start' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              <div style={{ 
+                width: '12px', height: '12px', borderRadius: '50%', 
+                background: isComplete ? 'var(--color-primary)' : isActive ? 'var(--color-accent)' : '#ddd',
+                boxShadow: isActive ? '0 0 10px var(--color-accent)' : 'none',
+                transition: 'all 0.5s ease'
+              }} />
+              {step.id < steps.length && (
+                <div style={{ width: '1px', height: '30px', background: '#ddd' }} />
+              )}
+            </div>
+            <div style={{ opacity: isComplete ? 0.5 : 1, transition: 'opacity 0.5s ease' }}>
+              <div style={{ fontSize: '0.9rem', fontWeight: 'bold', letterSpacing: '1px', color: isActive ? 'var(--color-primary)' : 'inherit' }}>
+                {step.label.toUpperCase()} {isActive && "..."}
+              </div>
+              <div style={{ fontSize: '0.75rem', opacity: 0.6 }}>{step.detail}</div>
+            </div>
+          </div>
+        );
+      })}
     </div>
   );
 };
