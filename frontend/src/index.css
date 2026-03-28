@@ -1,0 +1,162 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Inter:wght@100..900&display=swap');
+
+:root {
+  --color-bg: #0a0a0c;
+  --color-paper: #f4f1ea;
+  --color-primary: #c4a484; /* Brass/Gold */
+  --color-accent: #8b0000; /* Deep Maroon */
+  --color-saffron: #ff9933;
+  --color-text: #e0e0e0;
+  --color-text-dark: #1a1a1a;
+  --font-serif: 'Playfair Display', serif;
+  --font-sans: 'Inter', sans-serif;
+  --glass-bg: rgba(255, 255, 255, 0.05);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --shadow-premium: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-sans);
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+h1, h2, h3, h4, .serif {
+  font-family: var(--font-serif);
+  color: var(--color-primary);
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+  transition: all 0.3s ease;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  outline: none;
+  font-family: var(--font-sans);
+}
+
+/* Transitions */
+.page-transition {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Premium Glassmorphism */
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+}
+
+/* Detective Elements */
+.dossier-card {
+  background-color: var(--color-paper);
+  color: var(--color-text-dark);
+  padding: 2rem;
+  box-shadow: var(--shadow-premium);
+  position: relative;
+  border-radius: 4px;
+}
+
+.dossier-card::before {
+  content: "TOP SECRET";
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  border: 3px solid var(--color-accent);
+  color: var(--color-accent);
+  padding: 5px 10px;
+  font-weight: 900;
+  transform: rotate(15deg);
+  opacity: 0.2;
+  font-family: var(--font-sans);
+}
+
+.magnifying-glass-hover:hover {
+  cursor: zoom-in;
+}
+
+.stamped {
+  position: relative;
+  display: inline-block;
+}
+
+.stamped::after {
+  content: "";
+  position: absolute;
+  width: 50px;
+  height: 50px;
+  background-image: url("https://img.icons8.com/ios-filled/50/8b0000/wax-seal.png"); /* Placeholder seal */
+  background-size: contain;
+  bottom: -10px;
+  right: -20px;
+  opacity: 0.7;
+}
+
+/* Layout Utilities */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.grid-cols-3 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+}
+
+/* Premium Buttons */
+.btn-primary {
+  background: var(--color-primary);
+  color: var(--color-text-dark);
+  padding: 12px 24px;
+  border-radius: 6px;
+  font-weight: 600;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid transparent;
+}
+
+.btn-primary:hover {
+  background: transparent;
+  color: var(--color-primary);
+  border-color: var(--color-primary);
+  box-shadow: 0 0 15px var(--color-primary);
+}
+
+.btn-outline {
+  background: transparent;
+  color: var(--color-primary);
+  border: 1px solid var(--color-primary);
+  padding: 12px 24px;
+  border-radius: 6px;
+  font-weight: 600;
+}
+
+.btn-outline:hover {
+  background: var(--color-primary);
+  color: var(--color-text-dark);
+}
